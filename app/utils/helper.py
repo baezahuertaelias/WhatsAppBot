@@ -3,6 +3,7 @@
 from yowsup.layers.protocol_messages.protocolentities import *
 import string
 from pprint import pprint
+import re
 
 log_file = "maclog.txt"
 me = "5218114140740@s.whatsapp.net" # Daniel Cardenas
@@ -16,7 +17,17 @@ def get_who_send(message_entity):
     
     
 def sender_name(message_entity):
-    name = message_entity.getNotify()
+    name_full = message_entity.getNotify()
+    #wenaelias
+    print("NOMBRE EN BRUTO "+name_full)
+    emoji_pattern = re.compile("["
+        u"\U0001F600-\U0001F64F"  # emoticons
+        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           "]+", flags=re.UNICODE)
+    print("NOMBRE EDITADO"+emoji_pattern.sub(r'', name_full))
+    name = emoji_pattern.sub(r'', name_full)
     name = name.encode('latin-1')
     name = name.decode('utf-8')
     return name
