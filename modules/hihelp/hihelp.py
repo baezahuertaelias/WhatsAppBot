@@ -2,6 +2,7 @@ from app.mac import mac, signals
 import os
 from colorama import Fore, Back, Style
 import threading
+import youtube_dl
 '''
 Signals this module listents to:
 1. When a message is received (signals.command_received)
@@ -21,6 +22,26 @@ def handle(message):
     elif message.command.startswith("audio"):
         audio(message)
 
+
+'''
+Youtube downloader methods
+==========================================================
+'''
+#Esto lo descarga en un mp3 de 192kbps
+def download_song(song_url, song_title):
+    '''
+    Downloads song from youtube-dl
+    '''
+    outtmpl = song_title + '.%(ext)s'
+    ydl_opts = {
+        'format': 'bestvideo[height<=480]+bestaudio[ext=m4a]/bestvideo+bestaudio',
+        'outtmpl': outtmpl,
+
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(song_url, download=True) 
+
 '''
 Actual module code
 ==========================================================
@@ -35,6 +56,7 @@ def hi(message):
 def help(message):
     answer = "hola, estoy en el help"
     mac.send_message(answer, message.conversation)
+    download_song("https://www.youtube.com/watch?v=CiIS5yRF_vA", "test")
 
 def video(message):
     os.system("youtube-dl -f \'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4\' -o " + message.conversation[:11] + " " + message.command[5:])
